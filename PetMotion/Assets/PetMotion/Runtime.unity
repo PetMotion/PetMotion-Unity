@@ -880,10 +880,10 @@ MonoBehaviour:
   Actor: {fileID: 281735015}
   Framerate: 60
   NeuralNetwork:
-    Model: {fileID: 5022602860645237092, guid: ac83b9e3fd6a1644192ec1ce0871e510, type: 3}
+    Model: {fileID: 5022602860645237092, guid: 1d347aad3dd2314428a41c2b7eba81f5, type: 3}
     Device: 256
   Camera: {fileID: 97758532}
-  DrawGUI: 0
+  DrawGUI: 1
   DrawDebug: 1
   Channels: 5
   MoveSpeed: 1.8

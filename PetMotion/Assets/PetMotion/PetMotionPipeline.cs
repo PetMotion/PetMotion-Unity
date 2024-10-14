@@ -6,8 +6,8 @@ using System.Collections;
 using System.Collections.Generic;
 using PetsonalAI;
 
-namespace DeepGesture {
-    public class QuadrupedPipeline : AssetPipelineSetup {
+namespace PetMotion {
+    public class PetMotionPipeline : AssetPipelineSetup {
 
         public enum MODE {ProcessAssets, ExportController, ExportControllerLMP, ExportControllerMANN};
         public MODE Mode = MODE.ProcessAssets;
@@ -533,7 +533,7 @@ namespace DeepGesture {
         }
 
         private class ControllerSetup {
-            public static void Export(QuadrupedPipeline setup, AssetPipeline.Data X, AssetPipeline.Data Y, float tCurrent, float tNext) {
+            public static void Export(PetMotionPipeline setup, AssetPipeline.Data X, AssetPipeline.Data Y, float tCurrent, float tNext) {
                 Container current = new Container(setup, tCurrent);
                 Container next = new Container(setup, tNext);
 
@@ -607,7 +607,7 @@ namespace DeepGesture {
                 public Matrix4x4[] ActorPosture;
                 public Vector3[] ActorVelocities;
 
-                public Container(QuadrupedPipeline setup, float timestamp) {
+                public Container(PetMotionPipeline setup, float timestamp) {
                     MotionEditor editor = setup.Pipeline.GetEditor();
                     editor.LoadFrame(timestamp);
                     Asset = editor.GetSession().Asset;
@@ -628,7 +628,7 @@ namespace DeepGesture {
 
 
         private class ControllerLMPSetup {
-            public static void Export(QuadrupedPipeline setup, AssetPipeline.Data X, AssetPipeline.Data Y, float tCurrent, float tNext) {
+            public static void Export(PetMotionPipeline setup, AssetPipeline.Data X, AssetPipeline.Data Y, float tCurrent, float tNext) {
                 Container current = new Container(setup, tCurrent);
                 Container next = new Container(setup, tNext);
 
@@ -722,7 +722,7 @@ namespace DeepGesture {
                 public Matrix4x4[] ActorPosture;
                 public Vector3[] ActorVelocities;
 
-                public Container(QuadrupedPipeline setup, float timestamp) {
+                public Container(PetMotionPipeline setup, float timestamp) {
                     MotionEditor editor = setup.Pipeline.GetEditor();
                     editor.LoadFrame(timestamp);
                     Asset = editor.GetSession().Asset;
@@ -742,7 +742,7 @@ namespace DeepGesture {
         }
         
         private class ControllerMANNSetup {
-            public static void Export(QuadrupedPipeline setup, AssetPipeline.Data X, AssetPipeline.Data Y, float tCurrent, float tNext) {
+            public static void Export(PetMotionPipeline setup, AssetPipeline.Data X, AssetPipeline.Data Y, float tCurrent, float tNext) {
                 Container current = new Container(setup, tCurrent);
                 Container next = new Container(setup, tNext);
 
@@ -818,7 +818,7 @@ namespace DeepGesture {
                 public Matrix4x4[] ActorPosture;
                 public Vector3[] ActorVelocities;
 
-                public Container(QuadrupedPipeline setup, float timestamp) {
+                public Container(PetMotionPipeline setup, float timestamp) {
                     MotionEditor editor = setup.Pipeline.GetEditor();
                     editor.LoadFrame(timestamp);
                     Asset = editor.GetSession().Asset;
@@ -849,82 +849,82 @@ namespace DeepGesture {
 
 
 
-            // {
-            //     //TODO: replace like in soccer pipeline
-            //     StyleModule module = asset.HasModule<StyleModule>() ? asset.GetModule<StyleModule>() : asset.AddModule<StyleModule>();
-            //     RootModule root = asset.GetModule<RootModule>();
-            //     ContactModule contact = asset.GetModule<ContactModule>();
-            //     module.Clear();
-            //     StyleModule.StyleFunction idling = module.AddStyle("Idle");
-            //     StyleModule.StyleFunction moving = module.AddStyle("Move");
-            //     StyleModule.StyleFunction sitting = module.AddStyle("Sit");
-            //     StyleModule.StyleFunction resting = module.AddStyle("Rest");
-            //     StyleModule.StyleFunction standing = module.AddStyle("Stand");
-            //     StyleModule.StyleFunction jumping = module.AddStyle("Jump");
-            //     StyleModule.StyleFunction speed = module.AddStyle("Speed");
-            //     float[] timeWindow = asset.GetTimeWindow(Pipeline.GetEditor().PastWindow + Pipeline.GetEditor().FutureWindow, 1f);
-            //     float[] contactHeights = new float[asset.Frames.Length];
-            //     for(int i=0; i<asset.Frames.Length; i++) {
-            //         for(int j=0; j<contact.Sensors.Length; j++) {
-            //             contactHeights[i] += asset.Frames[i].GetBoneTransformation(contact.Sensors[j].Bone, false).GetPosition().y;
-            //         }
-            //         contactHeights[i] /= contact.Sensors.Length;
-            //     }
-            //     for(int f=0; f<asset.Frames.Length; f++) {
-            //         float weight = GetMovementWeight(asset.Frames[f].Timestamp, 0.5f);
-            //         idling.Values[f] = 1f - weight;
-            //         moving.Values[f] = weight;
-            //         float sit = GetContactsWeight(asset.Frames[f].Timestamp, 0.5f, contact, sitPatterns, 0f, 1f);
-            //         float rest = GetContactsWeight(asset.Frames[f].Timestamp, 0.5f, contact, restPatterns, 0f, 1f);
-            //         float stand = GetContactsWeight(asset.Frames[f].Timestamp, 0.5f, contact, standPatterns, 0f, 1f);
-            //         float jump = GetContactsWeight(asset.Frames[f].Timestamp, 0.5f, contact, jumpPatterns, 0.3f, 0.1f);
-            //         float[] actions = new float[]{sit, rest, stand, jump};
-            //         Utility.SoftMax(ref actions);
-            //         sitting.Values[f] = sit;
-            //         resting.Values[f] = rest;
-            //         standing.Values[f] = stand;
-            //         jumping.Values[f] = jump;
-            //         speed.Values[f] = root.GetRootLength(asset.Frames[f].Timestamp, false); //TODO: Divide by root window
-            //     }
+// {
+//     //TODO: replace like in soccer pipeline
+//     StyleModule module = asset.HasModule<StyleModule>() ? asset.GetModule<StyleModule>() : asset.AddModule<StyleModule>();
+//     RootModule root = asset.GetModule<RootModule>();
+//     ContactModule contact = asset.GetModule<ContactModule>();
+//     module.Clear();
+//     StyleModule.StyleFunction idling = module.AddStyle("Idle");
+//     StyleModule.StyleFunction moving = module.AddStyle("Move");
+//     StyleModule.StyleFunction sitting = module.AddStyle("Sit");
+//     StyleModule.StyleFunction resting = module.AddStyle("Rest");
+//     StyleModule.StyleFunction standing = module.AddStyle("Stand");
+//     StyleModule.StyleFunction jumping = module.AddStyle("Jump");
+//     StyleModule.StyleFunction speed = module.AddStyle("Speed");
+//     float[] timeWindow = asset.GetTimeWindow(Pipeline.GetEditor().PastWindow + Pipeline.GetEditor().FutureWindow, 1f);
+//     float[] contactHeights = new float[asset.Frames.Length];
+//     for(int i=0; i<asset.Frames.Length; i++) {
+//         for(int j=0; j<contact.Sensors.Length; j++) {
+//             contactHeights[i] += asset.Frames[i].GetBoneTransformation(contact.Sensors[j].Bone, false).GetPosition().y;
+//         }
+//         contactHeights[i] /= contact.Sensors.Length;
+//     }
+//     for(int f=0; f<asset.Frames.Length; f++) {
+//         float weight = GetMovementWeight(asset.Frames[f].Timestamp, 0.5f);
+//         idling.Values[f] = 1f - weight;
+//         moving.Values[f] = weight;
+//         float sit = GetContactsWeight(asset.Frames[f].Timestamp, 0.5f, contact, sitPatterns, 0f, 1f);
+//         float rest = GetContactsWeight(asset.Frames[f].Timestamp, 0.5f, contact, restPatterns, 0f, 1f);
+//         float stand = GetContactsWeight(asset.Frames[f].Timestamp, 0.5f, contact, standPatterns, 0f, 1f);
+//         float jump = GetContactsWeight(asset.Frames[f].Timestamp, 0.5f, contact, jumpPatterns, 0.3f, 0.1f);
+//         float[] actions = new float[]{sit, rest, stand, jump};
+//         Utility.SoftMax(ref actions);
+//         sitting.Values[f] = sit;
+//         resting.Values[f] = rest;
+//         standing.Values[f] = stand;
+//         jumping.Values[f] = jump;
+//         speed.Values[f] = root.GetRootLength(asset.Frames[f].Timestamp, false); //TODO: Divide by root window
+//     }
 
-            //     float GetMovementWeight(float timestamp, float threshold) {
-            //         float[] weights = new float[timeWindow.Length];
-            //         for(int j=0; j<timeWindow.Length; j++) {
-            //             weights[j] = Mathf.Max(
-            //                             root.GetRootVelocity(timestamp + timeWindow[j], false).magnitude,
-            //                             root.GetRootAngle(timestamp + timeWindow[j], false)
-            //                         ).Ratio(0f, threshold);
-            //         }
-                    
-            //         float[] gradients = new float[weights.Length-1];
-            //         for(int i=0; i<gradients.Length; i++) {
-            //             gradients[i] = (weights[i+1] - weights[i]) / (timeWindow[i+1] - timeWindow[i]);
-            //         }
+//     float GetMovementWeight(float timestamp, float threshold) {
+//         float[] weights = new float[timeWindow.Length];
+//         for(int j=0; j<timeWindow.Length; j++) {
+//             weights[j] = Mathf.Max(
+//                             root.GetRootVelocity(timestamp + timeWindow[j], false).magnitude,
+//                             root.GetRootAngle(timestamp + timeWindow[j], false)
+//                         ).Ratio(0f, threshold);
+//         }
 
-            //         return weights.Gaussian(Mathf.Abs(gradients.Gaussian())).SmoothStep(2f, 0.5f);
-            //     }
+//         float[] gradients = new float[weights.Length-1];
+//         for(int i=0; i<gradients.Length; i++) {
+//             gradients[i] = (weights[i+1] - weights[i]) / (timeWindow[i+1] - timeWindow[i]);
+//         }
 
-            //     float GetContactsWeight(float timestamp, float window, ContactModule module, List<float[]> patterns, float heightThreshold, float power) {
-            //         float ContactGaussian(float t) {
-            //             float[] weights = new float[timeWindow.Length];
-            //             for(int j=0; j<timeWindow.Length; j++) {
-            //                 bool match = false;
-            //                 for(int i=0; i<patterns.Count; i++) {
-            //                     float[] contacts = module.GetContacts(t + timeWindow[j], false);
-            //                     match = ArrayExtensions.Equal(contacts, patterns[i]).All(true);
-            //                     if(match) {
-            //                         break;
-            //                     }
-            //                 }
-            //                 if(match && heightThreshold != 0f && contactHeights[asset.GetFrame(t).Index-1] < heightThreshold) {
-            //                     match = false;
-            //                 }
-            //                 weights[j] = match ? 1f : 0f;
-            //             }
-            //             return weights.Gaussian();
-            //         }
-            //         float weight = ContactGaussian(timestamp);
-            //         weight = Mathf.Pow(weight, 1f-weight);
-            //         return Mathf.Pow(weight, power);
-            //     }
-            // }
+//         return weights.Gaussian(Mathf.Abs(gradients.Gaussian())).SmoothStep(2f, 0.5f);
+//     }
+
+//     float GetContactsWeight(float timestamp, float window, ContactModule module, List<float[]> patterns, float heightThreshold, float power) {
+//         float ContactGaussian(float t) {
+//             float[] weights = new float[timeWindow.Length];
+//             for(int j=0; j<timeWindow.Length; j++) {
+//                 bool match = false;
+//                 for(int i=0; i<patterns.Count; i++) {
+//                     float[] contacts = module.GetContacts(t + timeWindow[j], false);
+//                     match = ArrayExtensions.Equal(contacts, patterns[i]).All(true);
+//                     if(match) {
+//                         break;
+//                     }
+//                 }
+//                 if(match && heightThreshold != 0f && contactHeights[asset.GetFrame(t).Index-1] < heightThreshold) {
+//                     match = false;
+//                 }
+//                 weights[j] = match ? 1f : 0f;
+//             }
+//             return weights.Gaussian();
+//         }
+//         float weight = ContactGaussian(timestamp);
+//         weight = Mathf.Pow(weight, 1f-weight);
+//         return Mathf.Pow(weight, power);
+//     }
+// }

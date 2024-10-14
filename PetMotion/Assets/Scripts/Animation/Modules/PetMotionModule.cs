@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEditor;
 
 namespace PetsonalAI {
-    public class DeepGestureModule : Module {
+    public class PetMotionModule : Module {
         public Channel[] Channels = new Channel[0];
         [NonSerialized] private bool UseOffsets = false;
         [NonSerialized] private bool ShowParameters = false;
@@ -21,7 +21,7 @@ namespace PetsonalAI {
             public MotionAsset Asset;
             public Actor Actor;
             public TimeSeries TimeSeries;
-            public DeepGestureModule Module;
+            public PetMotionModule Module;
 
             public Map GlobalChannel;
             public Map[] LocalChannels;
@@ -40,7 +40,7 @@ namespace PetsonalAI {
                 }
             }
 
-            public DistanceSeries(MotionAsset asset, Actor actor, TimeSeries timeSeries, DeepGestureModule module) {
+            public DistanceSeries(MotionAsset asset, Actor actor, TimeSeries timeSeries, PetMotionModule module) {
                 Asset = asset;
                 Actor = actor;
                 TimeSeries = timeSeries;
@@ -225,7 +225,7 @@ namespace PetsonalAI {
         // *********************** Channel ***********************
         [Serializable]
         public class Channel {
-            public DeepGestureModule Module;
+            public PetMotionModule Module;
 
             public float[] RegularPhaseValues; // [Frames.Length]
             public float[] RegularFrequencies;
@@ -237,7 +237,7 @@ namespace PetsonalAI {
             public float[] MirroredAmplitudes;
             public float[] MirroredOffsets;
 
-            public Channel(DeepGestureModule module) {
+            public Channel(PetMotionModule module) {
                 Module = module;
 
                 RegularPhaseValues = new float[module.Asset.Frames.Length];
@@ -366,7 +366,7 @@ namespace PetsonalAI {
             Curves = new CurveSeries(asset, actor, timeSeries);
         }
 
-        public static void ComputeDistances(MotionAsset asset, Actor actor, TimeSeries timeSeries, DeepGestureModule module) {
+        public static void ComputeDistances(MotionAsset asset, Actor actor, TimeSeries timeSeries, PetMotionModule module) {
             Distances = new DistanceSeries(asset, actor, timeSeries, module);
         }
 

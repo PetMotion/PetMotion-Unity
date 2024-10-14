@@ -12,7 +12,7 @@ public class VisualizeChannel : EditorWindow
 	public static Vector2 Scroll;
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~
-	public string Tag = "8Channels";
+	public string Tag = "5Channels";
 	public bool Mirror = false;
 	public bool UseOffsets = false;
 	public bool ShowParameters = false;

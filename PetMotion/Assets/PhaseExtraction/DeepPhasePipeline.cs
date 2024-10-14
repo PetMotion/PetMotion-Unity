@@ -5,7 +5,7 @@ using System;
 using System.Collections;
 using PetsonalAI;
 
-namespace DeepGesture {
+namespace PetMotion {
     public class DeepPhasePipeline : AssetPipelineSetup {
         public SocketNetwork Network;
 

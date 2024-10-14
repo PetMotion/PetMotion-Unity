@@ -6,8 +6,8 @@ using UltimateIK;
 using System.Collections.Generic;
 using Unity.Barracuda;
 
-namespace DeepGesture {
-    public class QuadrupedController_GNN : AnimationController {
+namespace PetMotion {
+    public class PetController : AnimationController {
 
         public ONNXNetwork NeuralNetwork;
 
@@ -21,16 +21,16 @@ namespace DeepGesture {
         public float SprintSpeed = 4f;
 
         public float RootDampening = 1f;
-        [Range(0f,1f)] public float PositionBias = 1f;
-        [Range(0f,1f)] public float DirectionBias = 1f;
-        [Range(0f,1f)] public float VelocityBias = 1f;
-        [Range(0f,1f)] public float ControlWeight = 1f/3f;
-        [Range(0f,1f)] public float CorrectionWeight = 1f/3f;
-        [Range(0f,1f)] public float PhaseStability = 0.5f;
+        [Range(0f, 1f)] public float PositionBias = 1f;
+        [Range(0f, 1f)] public float DirectionBias = 1f;
+        [Range(0f, 1f)] public float VelocityBias = 1f;
+        [Range(0f, 1f)] public float ControlWeight = 1f / 3f;
+        [Range(0f, 1f)] public float CorrectionWeight = 1f / 3f;
+        [Range(0f, 1f)] public float PhaseStability = 0.5f;
 
         public bool Postprocessing = true;
         public float ContactPower = 3f;
-        public float ContactThreshold = 2f/3f;
+        public float ContactThreshold = 2f / 3f;
 
         public bool[] ActivePhases = new bool[0];
 
@@ -59,7 +59,7 @@ namespace DeepGesture {
             Accumulate("RightFootSite", 3);
         }
 
-        protected override void Setup() {	
+        protected override void Setup() {
             Controller = new InputSystem(1);
 
             InputSystem.Logic idle = Controller.AddLogic("Idle", () => Controller.QueryLeftJoystickVector().magnitude < 0.1f && Controller.QueryRightJoystickVector().magnitude < 0.1f);
@@ -69,7 +69,7 @@ namespace DeepGesture {
 
             TimeSeries = new TimeSeries(6, 6, 1f, 1f, 10);
             RootSeries = new RootModule.Series(TimeSeries, transform);
-            StyleSeries = new StyleModule.Series(TimeSeries, new string[]{"Idle", "Move", "Speed"}, new float[]{1f, 0f, 0f});
+            StyleSeries = new StyleModule.Series(TimeSeries, new string[] { "Idle", "Move", "Speed" }, new float[] { 1f, 0f, 0f });
             ContactSeries = new ContactModule.Series(TimeSeries, "Left Hand", "Right Hand", "Left Foot", "Right Foot");
             PhaseSeries = new DeepPhaseModule.Series(TimeSeries, Channels);
 
@@ -93,9 +93,9 @@ namespace DeepGesture {
             NeuralNetwork.CreateSession();
         }
 
-		protected override void Destroy() {
+        protected override void Destroy() {
             NeuralNetwork.CloseSession();
-		}
+        }
 
         protected override void Control() {
             UserControl();
@@ -116,9 +116,10 @@ namespace DeepGesture {
 
             //Amplify Factors
             move = Quaternion.LookRotation(Vector3.ProjectOnPlane(transform.position - Camera.transform.position, Vector3.up).normalized, Vector3.up) * move;
-            if(Controller.QueryLogic("Sprint")) {
+            if (Controller.QueryLogic("Sprint")) {
                 move *= SprintSpeed;
-            } else {
+            }
+            else {
                 move *= MoveSpeed;
             }
 
@@ -136,7 +137,7 @@ namespace DeepGesture {
             Matrix4x4 root = Actor.GetRoot().GetWorldMatrix();
 
             //Input Timeseries
-            for(int i=0; i<TimeSeries.KeyCount; i++) {
+            for (int i = 0; i < TimeSeries.KeyCount; i++) {
                 int index = TimeSeries.GetKey(i).Index;
                 NeuralNetwork.FeedXZ(RootSeries.GetPosition(index).PositionTo(root));
                 NeuralNetwork.FeedXZ(RootSeries.GetDirection(index).DirectionTo(root));
@@ -145,7 +146,7 @@ namespace DeepGesture {
             }
 
             //Input Character
-            for(int i=0; i<Actor.Bones.Length; i++) {
+            for (int i = 0; i < Actor.Bones.Length; i++) {
                 NeuralNetwork.Feed(Actor.Bones[i].GetTransform().position.PositionTo(root));
                 NeuralNetwork.Feed(Actor.Bones[i].GetTransform().forward.DirectionTo(root));
                 NeuralNetwork.Feed(Actor.Bones[i].GetTransform().up.DirectionTo(root));
@@ -166,7 +167,7 @@ namespace DeepGesture {
             //Update Past States
             ContactSeries.Increment(0, TimeSeries.Pivot);
             PhaseSeries.Increment(0, TimeSeries.Pivot);
-            
+
             //Update Root State
             Vector3 offset = NeuralNetwork.ReadVector3();
             float update = StyleSeries.GetValue(TimeSeries.Pivot, "Speed");
@@ -176,28 +177,28 @@ namespace DeepGesture {
             Matrix4x4 root = Actor.GetRoot().GetWorldMatrix() * Matrix4x4.TRS(new Vector3(offset.x, 0f, offset.z), Quaternion.AngleAxis(offset.y, Vector3.up), Vector3.one);
             RootSeries.Transformations[TimeSeries.Pivot] = root;
             RootSeries.Velocities[TimeSeries.Pivot] = NeuralNetwork.ReadXZ().DirectionFrom(root);
-            for(int j=0; j<StyleSeries.Styles.Length; j++) {
+            for (int j = 0; j < StyleSeries.Styles.Length; j++) {
                 StyleSeries.Values[TimeSeries.Pivot][j] = Mathf.Lerp(
-                    StyleSeries.Values[TimeSeries.Pivot][j], 
-                    NeuralNetwork.Read(), 
+                    StyleSeries.Values[TimeSeries.Pivot][j],
+                    NeuralNetwork.Read(),
                     CorrectionWeight
                 );
             }
 
             //Read Future States
-            for(int i=TimeSeries.PivotKey+1; i<TimeSeries.KeyCount; i++) {
+            for (int i = TimeSeries.PivotKey + 1; i < TimeSeries.KeyCount; i++) {
                 int index = TimeSeries.GetKey(i).Index;
 
                 Matrix4x4 m = Matrix4x4.TRS(NeuralNetwork.ReadXZ().PositionFrom(root), Quaternion.LookRotation(NeuralNetwork.ReadXZ().DirectionFrom(root).normalized, Vector3.up), Vector3.one);
-                RootSeries.Transformations[index] = Utility.Interpolate(RootSeries.Transformations[index], m, 
+                RootSeries.Transformations[index] = Utility.Interpolate(RootSeries.Transformations[index], m,
                     CorrectionWeight,
                     CorrectionWeight
                 );
-                RootSeries.Velocities[index] = Vector3.Lerp(RootSeries.Velocities[index], NeuralNetwork.ReadXZ().DirectionFrom(root), 
+                RootSeries.Velocities[index] = Vector3.Lerp(RootSeries.Velocities[index], NeuralNetwork.ReadXZ().DirectionFrom(root),
                     CorrectionWeight
                 );
-                
-                for(int j=0; j<StyleSeries.Styles.Length; j++) {
+
+                for (int j = 0; j < StyleSeries.Styles.Length; j++) {
                     StyleSeries.Values[index][j] = Mathf.Lerp(StyleSeries.Values[index][j], NeuralNetwork.Read(), CorrectionWeight);
                 }
             }
@@ -207,13 +208,13 @@ namespace DeepGesture {
             Vector3[] forwards = new Vector3[Actor.Bones.Length];
             Vector3[] upwards = new Vector3[Actor.Bones.Length];
             Vector3[] velocities = new Vector3[Actor.Bones.Length];
-            for(int i=0; i<Actor.Bones.Length; i++) {
+            for (int i = 0; i < Actor.Bones.Length; i++) {
                 Vector3 position = NeuralNetwork.ReadVector3().PositionFrom(root);
                 Vector3 forward = forward = NeuralNetwork.ReadVector3().normalized.DirectionFrom(root);
                 Vector3 upward = NeuralNetwork.ReadVector3().normalized.DirectionFrom(root);
                 Vector3 velocity = NeuralNetwork.ReadVector3().DirectionFrom(root);
-                if(!Actor.Bones[i].GetName().Contains("Tail")) {
-                    if(Controller.QueryLogic("Idle") && update < 1f) {
+                if (!Actor.Bones[i].GetName().Contains("Tail")) {
+                    if (Controller.QueryLogic("Idle") && update < 1f) {
                         float weight = update.Normalize(0f, 1f, 0.25f, 1f);
                         position = Vector3.Lerp(Actor.Bones[i].GetPosition(), position, weight);
                         forward = Vector3.Slerp(Actor.Bones[i].GetTransform().forward, forward, weight);
@@ -221,7 +222,7 @@ namespace DeepGesture {
                         velocity = Vector3.Lerp(Actor.Bones[i].GetVelocity(), velocity, weight);
                     }
                 }
-                if(Actor.Bones[i].GetName().Contains("Head")) {
+                if (Actor.Bones[i].GetName().Contains("Head")) {
                     forward = Vector3.Slerp(Actor.Bones[i].GetTransform().forward, forward, 0.5f);
                     upward = Vector3.Slerp(Actor.Bones[i].GetTransform().up, upward, 0.5f);
                 }
@@ -233,12 +234,12 @@ namespace DeepGesture {
 
             //Update Contacts
             float[] contacts = NeuralNetwork.Read(ContactSeries.Bones.Length, 0f, 1f);
-            for(int i=0; i<ContactSeries.Bones.Length; i++) {
+            for (int i = 0; i < ContactSeries.Bones.Length; i++) {
                 ContactSeries.Values[TimeSeries.Pivot][i] = contacts[i].SmoothStep(ContactPower, ContactThreshold);
             }
 
             //Update Phases
-            PhaseSeries.UpdateAlignment(NeuralNetwork.Read((1+PhaseSeries.FutureKeys) * PhaseSeries.Channels * 4), PhaseStability, 1f/Framerate);
+            PhaseSeries.UpdateAlignment(NeuralNetwork.Read((1 + PhaseSeries.FutureKeys) * PhaseSeries.Channels * 4), PhaseStability, 1f / Framerate);
 
             //Interpolate Timeseries
             RootSeries.Interpolate(TimeSeries.Pivot, TimeSeries.Samples.Length);
@@ -248,7 +249,7 @@ namespace DeepGesture {
             //Assign Posture
             transform.position = RootSeries.GetPosition(TimeSeries.Pivot);
             transform.rotation = RootSeries.GetRotation(TimeSeries.Pivot);
-            for(int i=0; i<Actor.Bones.Length; i++) {
+            for (int i = 0; i < Actor.Bones.Length; i++) {
                 Actor.Bones[i].SetVelocity(velocities[i]);
                 Actor.Bones[i].SetPosition(positions[i]);
                 Actor.Bones[i].SetRotation(Quaternion.LookRotation(forwards[i], upwards[i]));
@@ -257,9 +258,9 @@ namespace DeepGesture {
             //Correct Twist
             Actor.RestoreAlignment();
 
-            for(int i=0; i<PhaseSeries.Channels; i++) {
-                if(!ActivePhases[i]) {
-                    for(int j=0; j<PhaseSeries.Samples.Length; j++) {
+            for (int i = 0; i < PhaseSeries.Channels; i++) {
+                if (!ActivePhases[i]) {
+                    for (int j = 0; j < PhaseSeries.Samples.Length; j++) {
                         PhaseSeries.Amplitudes[j][i] = 0f;
                     }
                 }
@@ -275,12 +276,12 @@ namespace DeepGesture {
         }
 
         private void ProcessFootIK(IK ik, float contact) {
-            if(!Postprocessing) {
+            if (!Postprocessing) {
                 return;
             }
             ik.Activation = UltimateIK.ACTIVATION.Linear;
-            for(int i=0; i<ik.Objectives.Length; i++) {
-                ik.Objectives[i].SetTarget(Vector3.Lerp(ik.Objectives[i].TargetPosition, ik.Joints[ik.Objectives[i].Joint].Transform.position, 1f-contact));
+            for (int i = 0; i < ik.Objectives.Length; i++) {
+                ik.Objectives[i].SetTarget(Vector3.Lerp(ik.Objectives[i].TargetPosition, ik.Joints[ik.Objectives[i].Joint].Transform.position, 1f - contact));
                 ik.Objectives[i].SetTarget(ik.Joints[ik.Objectives[i].Joint].Transform.rotation);
             }
             ik.Iterations = 25;

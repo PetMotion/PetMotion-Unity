@@ -33,7 +33,7 @@ public class VisualizePhaseDistance : EditorWindow
 	public static string assetName = string.Empty;
 	public static float height = 50f;
 
-	public string Tag = "8Channels";
+	public string Tag = "5Channels";
 
 	[MenuItem("PetsonalAI/Visualize/Visualize Phase Distance")]
 	static void Init()
