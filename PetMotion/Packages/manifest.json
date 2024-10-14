@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.unity.barracuda": "file:F:/PetsonalAI/PetMotion-Unity/Package/Barracuda",
+    "com.unity.barracuda": "file:F:/OpenHuman/PetMotion-Unity/Package/Barracuda",
     "com.unity.collab-proxy": "2.5.2",
     "com.unity.feature.development": "1.0.1",
     "com.unity.textmeshpro": "3.0.6",
