@@ -16,7 +16,7 @@ namespace DeepGesture {
         public bool DrawGUI = true;
         public bool DrawDebug = true;
 
-        public int Channels = 10;
+        public int Channels = 5;
         public float MoveSpeed = 1.5f;
         public float SprintSpeed = 4f;
 

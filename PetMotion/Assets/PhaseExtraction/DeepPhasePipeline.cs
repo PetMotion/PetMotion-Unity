@@ -9,7 +9,7 @@ namespace DeepGesture {
     public class DeepPhasePipeline : AssetPipelineSetup {
         public SocketNetwork Network;
 
-        public int Channels = 8;
+        public int Channels = 5;
         public bool WriteMirror = true;
 
         public string TagSuffix = string.Empty;
