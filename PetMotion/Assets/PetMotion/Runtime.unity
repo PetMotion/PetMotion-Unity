@@ -443,7 +443,7 @@ GameObject:
   - component: {fileID: 281735014}
   - component: {fileID: 281735015}
   m_Layer: 0
-  m_Name: Dog_Quadruoed_Controller_GNN
+  m_Name: PetController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -883,8 +883,8 @@ MonoBehaviour:
     Model: {fileID: 5022602860645237092, guid: 1d347aad3dd2314428a41c2b7eba81f5, type: 3}
     Device: 256
   Camera: {fileID: 97758532}
-  DrawGUI: 1
-  DrawDebug: 1
+  DrawGUI: 0
+  DrawDebug: 0
   Channels: 5
   MoveSpeed: 1.8
   SprintSpeed: 4

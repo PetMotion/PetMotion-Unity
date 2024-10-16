@@ -1,4 +1,4 @@
-# if UNITY_EDITOR
+// # if UNITY_EDITOR
 
 using UnityEngine;
 using PetsonalAI;
@@ -35,7 +35,7 @@ namespace PetMotion {
 
         public bool[] ActivePhases = new bool[0];
 
-        private InputSystem Controller;
+        private ControlInputSystem Controller;
 
         private TimeSeries TimeSeries;
         private RootModule.Series RootSeries;
@@ -61,23 +61,23 @@ namespace PetMotion {
         }
 
         protected override void Setup() {
-            Controller = new InputSystem(1);
+            Controller = new ControlInputSystem(1);
 
             // InputSystem.Logic idle = Controller.AddLogic("Idle", () => Controller.QueryLeftJoystickVector().magnitude < 0.1f && Controller.QueryRightJoystickVector().magnitude < 0.1f);
             // InputSystem.Logic move = Controller.AddLogic("Move", () => !idle.Query());
             // InputSystem.Logic speed = Controller.AddLogic("Speed", () => true);
             // InputSystem.Logic sprint = Controller.AddLogic("Sprint", () => move.Query() && Controller.QueryLeftJoystickVector().y > 0.25f);
-            InputSystem.Logic idle = Controller.AddLogic("Idle", () =>
+            ControlInputSystem.Logic idle = Controller.AddLogic("Idle", () =>
                 Keyboard.current.wKey.isPressed == false &&
                 Keyboard.current.sKey.isPressed == false &&
                 Keyboard.current.aKey.isPressed == false &&
                 Keyboard.current.dKey.isPressed == false);
 
-            InputSystem.Logic move = Controller.AddLogic("Move", () => !idle.Query());
+            ControlInputSystem.Logic move = Controller.AddLogic("Move", () => !idle.Query());
 
-            InputSystem.Logic speed = Controller.AddLogic("Speed", () => true);
+            ControlInputSystem.Logic speed = Controller.AddLogic("Speed", () => true);
 
-            InputSystem.Logic sprint = Controller.AddLogic("Sprint", () =>
+            ControlInputSystem.Logic sprint = Controller.AddLogic("Sprint", () =>
                 move.Query() && Keyboard.current.wKey.isPressed &&
                 Keyboard.current.shiftKey.isPressed);
 
@@ -328,4 +328,4 @@ namespace PetMotion {
     }
 }
 
-#endif
+// #endif

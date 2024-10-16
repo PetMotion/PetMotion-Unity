@@ -1,10 +1,11 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class InputSystem {
+public class ControlInputSystem {
 
 	public enum ControlType { Controller, Keyboard };
-	public ControlType Control = ControlType.Controller;
+	public ControlType Control = ControlType.Keyboard;//Controller;
 
 	public enum Button {A, B, X, Y, LB, RB};
 
@@ -58,7 +59,7 @@ public class InputSystem {
 		}
 	}
 
-	public InputSystem(int id) {
+	public ControlInputSystem(int id) {
 		ID = id;
 	}
 
