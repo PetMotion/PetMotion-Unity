@@ -5,6 +5,7 @@ using PetsonalAI;
 using UltimateIK;
 using System.Collections.Generic;
 using Unity.Barracuda;
+using UnityEngine.InputSystem;
 
 namespace PetMotion {
     public class PetController : AnimationController {
@@ -62,10 +63,24 @@ namespace PetMotion {
         protected override void Setup() {
             Controller = new InputSystem(1);
 
-            InputSystem.Logic idle = Controller.AddLogic("Idle", () => Controller.QueryLeftJoystickVector().magnitude < 0.1f && Controller.QueryRightJoystickVector().magnitude < 0.1f);
+            // InputSystem.Logic idle = Controller.AddLogic("Idle", () => Controller.QueryLeftJoystickVector().magnitude < 0.1f && Controller.QueryRightJoystickVector().magnitude < 0.1f);
+            // InputSystem.Logic move = Controller.AddLogic("Move", () => !idle.Query());
+            // InputSystem.Logic speed = Controller.AddLogic("Speed", () => true);
+            // InputSystem.Logic sprint = Controller.AddLogic("Sprint", () => move.Query() && Controller.QueryLeftJoystickVector().y > 0.25f);
+            InputSystem.Logic idle = Controller.AddLogic("Idle", () =>
+                Keyboard.current.wKey.isPressed == false &&
+                Keyboard.current.sKey.isPressed == false &&
+                Keyboard.current.aKey.isPressed == false &&
+                Keyboard.current.dKey.isPressed == false);
+
             InputSystem.Logic move = Controller.AddLogic("Move", () => !idle.Query());
+
             InputSystem.Logic speed = Controller.AddLogic("Speed", () => true);
-            InputSystem.Logic sprint = Controller.AddLogic("Sprint", () => move.Query() && Controller.QueryLeftJoystickVector().y > 0.25f);
+
+            InputSystem.Logic sprint = Controller.AddLogic("Sprint", () =>
+                move.Query() && Keyboard.current.wKey.isPressed &&
+                Keyboard.current.shiftKey.isPressed);
+
 
             TimeSeries = new TimeSeries(6, 6, 1f, 1f, 10);
             RootSeries = new RootModule.Series(TimeSeries, transform);
